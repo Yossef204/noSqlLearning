@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkUserExist, createUser, filterUserEmailAndPhone, filterUserEmailAndPhoneById, updateUser } from "./user.service.js";
+import { checkUserExist, createUser, filterUserEmailAndPhone, filterUserEmailAndPhoneById, getAllUsers, updateUser } from "./user.service.js";
 import { ObjectId } from "mongodb";
 
 const router = Router();
@@ -59,5 +59,25 @@ router.put("/:id", async (req, res, next)=>{
   });
  }
 })
+
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await getAllUsers({email : {$exists : true}});
+    if(users.length === 0){
+        throw new Error("No users found", {cause: 404});
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Users retrieved successfully",
+      data: {users}
+    });
+    
+  } catch (error) {
+    res.status(error?.cause || 500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 
 export default router;

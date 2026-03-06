@@ -63,3 +63,7 @@ export const filterUserEmailAndPhoneById = (email, phone,id) => {
     ],
   };
 };
+
+export const getAllUsers = async (filter) => {
+    return await db.collection("users").find(filter).toArray();
+};
